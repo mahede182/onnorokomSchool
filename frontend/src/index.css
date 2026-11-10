@@ -1,0 +1,121 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f4f6f9;
+  color: #222;
+  min-height: 100vh;
+}
+
+#root { max-width: 960px; margin: 0 auto; padding: 1.5rem; }
+
+h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.25rem; }
+h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.75rem; }
+h3 { font-size: 1rem; font-weight: 600; }
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.col { flex: 1; min-width: 200px; }
+
+label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.25rem; color: #555; }
+
+input, select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 7px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border 0.15s;
+}
+input:focus { border-color: #3b82f6; }
+
+button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  border: none;
+  border-radius: 7px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.btn-primary { background: #3b82f6; color: #fff; }
+.btn-primary:hover:not(:disabled) { background: #2563eb; }
+.btn-danger { background: #ef4444; color: #fff; }
+.btn-danger:hover:not(:disabled) { background: #dc2626; }
+.btn-success { background: #22c55e; color: #fff; }
+.btn-success:hover:not(:disabled) { background: #16a34a; }
+.btn-secondary { background: #e5e7eb; color: #333; }
+.btn-secondary:hover:not(:disabled) { background: #d1d5db; }
+
+.badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.badge-held { background: #fef3c7; color: #92400e; }
+.badge-confirmed { background: #d1fae5; color: #065f46; }
+.badge-expired { background: #fee2e2; color: #991b1b; }
+.badge-cancelled { background: #f3f4f6; color: #6b7280; }
+
+.alert {
+  padding: 0.65rem 1rem;
+  border-radius: 7px;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+.alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.alert-success { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+
+.class-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.class-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1.1rem;
+  transition: box-shadow 0.15s;
+}
+.class-card:hover { box-shadow: 0 4px 12px rgba(59,130,246,0.1); }
+
+.seat-bar { margin: 0.5rem 0; height: 8px; border-radius: 4px; background: #e5e7eb; overflow: hidden; }
+.seat-bar-inner { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #3b82f6, #22c55e); transition: width 0.4s; }
+
+.seat-stats { display: flex; gap: 0.75rem; font-size: 0.8rem; color: #555; margin: 0.25rem 0 0.75rem; }
+
+.nav { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e5e7eb; flex-wrap: wrap; }
+.nav-btn { background: none; border: none; font-size: 0.95rem; font-weight: 600; padding: 0.35rem 0.9rem; border-radius: 7px; color: #666; cursor: pointer; }
+.nav-btn.active { background: #eff6ff; color: #2563eb; }
+
+.table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.table th { text-align: left; padding: 0.5rem 0.75rem; font-size: 0.8rem; color: #666; border-bottom: 1px solid #e5e7eb; }
+.table td { padding: 0.65rem 0.75rem; border-bottom: 1px solid #f3f4f6; }
+
+.spinner { border: 3px solid #e5e7eb; border-top-color: #3b82f6; border-radius: 50%; width: 28px; height: 28px; animation: spin 0.8s linear infinite; margin: 2rem auto; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.section-gap { margin-top: 1.5rem; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.text-sm { font-size: 0.85rem; color: #666; }
+.text-muted { color: #9ca3af; font-size: 0.85rem; }
