@@ -1,10 +1,9 @@
-using AdmissionSystem.Api.Data;
-using AdmissionSystem.Api.Services;
+using AdmissionSystem.Api;
+using AdmissionSystem.Api.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// PostgreSQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
     ?? "Host=localhost;Port=5432;Database=school_admission;Username=postgres;Password=postgres";
@@ -12,9 +11,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AdmissionDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-builder.Services.AddScoped<IAdmissionService, AdmissionService>();
-builder.Services.AddHostedService<ExpiredHoldCleanerService>();
-
+builder.Services.AddFeatureHandlers();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -29,7 +26,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// CORS for frontend
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -42,7 +38,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Auto-migrate on startup
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AdmissionDbContext>();
@@ -57,3 +52,4 @@ app.MapControllers();
 
 app.Run();
 
+public partial class Program;

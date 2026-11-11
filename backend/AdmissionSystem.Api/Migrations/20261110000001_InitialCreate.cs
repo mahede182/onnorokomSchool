@@ -76,3 +76,4 @@ namespace AdmissionSystem.Api.Migrations
         }
     }
 }
+

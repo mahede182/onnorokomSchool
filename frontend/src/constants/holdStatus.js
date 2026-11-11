@@ -1,0 +1,6 @@
+export const HOLD_STATUS = {
+  HELD: 'HELD',
+  CONFIRMED: 'CONFIRMED',
+  EXPIRED: 'EXPIRED',
+  CANCELLED: 'CANCELLED',
+};
