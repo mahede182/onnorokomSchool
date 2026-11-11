@@ -21,6 +21,7 @@ Inspired by [Feature Folders in .NET](https://milanjovanovic.tech/blog/feature-f
 
 - Register new handlers in `DependencyInjection.AddFeatureHandlers`.
 - Prefer **one file per use case** (`CreateHold.cs`) until it exceeds ~300 lines.
+- Keep MVC `*Endpoint` classes **top-level** (not nested inside the feature static class). Nested types are not controller-discovered (`Type.IsPublic == false`).
 - Do **not** reintroduce layer folders (`Controllers/`, `Services/`, `DTOs/`) for new work.
 
 ## EF Core & PostgreSQL

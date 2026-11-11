@@ -1,10 +1,12 @@
 import { useId, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../../../api';
 import { Alert } from '../../../components/Alert';
+import { ROUTES } from '../../../constants/routes';
 import { formatTime } from '../../../utils/formatDate';
 import { seatOccupancyPercent } from '../../../utils/seats';
 
-export function ClassCard({ cls, studentId, onHeld }) {
+export function ClassCard({ cls, studentId, canApply, onHeld }) {
   const alertId = useId();
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState(null);
@@ -14,19 +16,20 @@ export function ClassCard({ cls, studentId, onHeld }) {
 
   const handleHold = async () => {
     setMsg(null);
-    if (!studentId) {
-      setMsg('Enter your 17-digit Student ID first (top of page).');
+    if (!canApply) {
+      setMsg('Enter a valid 17-digit birth registration number above before applying.');
       setMsgType('error');
+      document.getElementById('student-id')?.focus();
       return;
     }
     setLoading(true);
     try {
       const { data } = await api.createHold(cls.id, studentId);
-      setMsg(`Hold created! Expires: ${formatTime(data.expiresAt)}`);
+      setMsg(`Applied! Hold expires at ${formatTime(data.expiresAt)}.`);
       setMsgType('success');
       onHeld?.();
     } catch (e) {
-      setMsg(e.error || 'Failed to create hold.');
+      setMsg(e.error || 'Could not apply. Seats may be full or the hold window expired.');
       setMsgType('error');
     } finally {
       setLoading(false);
@@ -47,20 +50,34 @@ export function ClassCard({ cls, studentId, onHeld }) {
         <div className="seat-bar-inner" style={{ width: `${pct}%` }} />
       </div>
       <ul className="seat-stats">
-        <li>{cls.confirmedSeats} confirmed</li>
-        <li>{cls.heldSeats} held</li>
-        <li>{cls.availableSeats} free</li>
+        <li>Total {cls.totalSeats}</li>
+        <li>Held {cls.heldSeats}</li>
+        <li>Confirmed {cls.confirmedSeats}</li>
+        <li>Vacant {cls.availableSeats}</li>
       </ul>
       <Alert id={alertId} msg={msg} type={msgType} />
-      <button
-        type="button"
-        className="btn-primary"
-        onClick={handleHold}
-        disabled={loading || cls.availableSeats === 0}
-        aria-describedby={msg ? alertId : undefined}
-      >
-        {loading ? 'Holding…' : cls.availableSeats === 0 ? 'Full' : 'Hold a Seat'}
-      </button>
+      <div className="row" style={{ gap: '0.5rem' }}>
+        <button
+          type="button"
+          className="btn-primary"
+          onClick={handleHold}
+          disabled={loading || !canApply || cls.availableSeats === 0}
+          aria-describedby={msg ? alertId : undefined}
+        >
+          {loading
+            ? 'Applying…'
+            : cls.availableSeats === 0
+              ? 'Full'
+              : !canApply
+                ? 'Enter ID to apply'
+                : 'Apply Now'}
+        </button>
+        {msgType === 'success' && (
+          <Link to={ROUTES.APPLICATIONS} className="btn-secondary btn-compact">
+            View application
+          </Link>
+        )}
+      </div>
     </article>
   );
 }

@@ -1,4 +1,5 @@
 using System.Data;
+using AdmissionSystem.Api.Common.Config;
 using AdmissionSystem.Api.Common.Contracts;
 using AdmissionSystem.Api.Common.Domain;
 using AdmissionSystem.Api.Common.Persistence;
@@ -23,7 +24,6 @@ public static class CreateHold
         IConfiguration configuration,
         ILogger<Handler> logger)
     {
-        private readonly int _holdDurationSeconds = ResolveHoldDuration(configuration);
 
         /*
         Purpose:
@@ -99,6 +99,7 @@ public static class CreateHold
                     return (false, null, "Seat not available.", 409);
                 }
 
+                // expiresAt drives the UI timer; duration from HOLD_DURATION_SECONDS (.env)
                 var hold = new HoldEntity
                 {
                     Id = $"h_{Guid.NewGuid():N}"[..10],
@@ -106,7 +107,7 @@ public static class CreateHold
                     StudentId = studentId,
                     Status = HoldStatus.Held,
                     CreatedAt = now,
-                    ExpiresAt = now.AddSeconds(_holdDurationSeconds)
+                    ExpiresAt = now.AddSeconds(HoldDuration.Resolve(configuration))
                 };
 
                 db.Holds.Add(hold);
@@ -127,43 +128,35 @@ public static class CreateHold
                 throw;
             }
         }
-
-        private static int ResolveHoldDuration(IConfiguration configuration)
-        {
-            var raw = Environment.GetEnvironmentVariable("HOLD_DURATION_SECONDS")
-                      ?? configuration["HOLD_DURATION_SECONDS"]
-                      ?? "600";
-            return int.TryParse(raw, out var seconds) && seconds > 0 ? seconds : 600;
-        }
     }
+}
 
-    [ApiController]
-    [Route("classes")]
-    [Tags("Holds")]
-    public sealed class Endpoint(Handler handler) : ControllerBase
+[ApiController]
+[Route("classes")]
+[Tags("Holds")]
+public sealed class CreateHoldEndpoint(CreateHold.Handler handler) : ControllerBase
+{
+    [HttpPost("{classId}/holds")]
+    public async Task<IActionResult> Handle(
+        string classId,
+        [FromHeader(Name = "X-Student-Id")] string? studentId,
+        CancellationToken ct)
     {
-        [HttpPost("{classId}/holds")]
-        public async Task<IActionResult> Handle(
-            string classId,
-            [FromHeader(Name = "X-Student-Id")] string? studentId,
-            CancellationToken ct)
+        if (string.IsNullOrWhiteSpace(classId))
         {
-            if (string.IsNullOrWhiteSpace(classId))
-            {
-                return BadRequest(new ErrorResponse("Class ID is required."));
-            }
-
-            var normalized = StudentIdValidator.Normalize(studentId);
-            if (normalized is null)
-            {
-                return BadRequest(new ErrorResponse(
-                    "Invalid or missing X-Student-Id header. Must be a 17-digit number."));
-            }
-
-            var (success, hold, error, statusCode) = await handler.Handle(classId, normalized, ct);
-            return success
-                ? StatusCode(statusCode, hold)
-                : StatusCode(statusCode, new ErrorResponse(error ?? "Failed to create hold."));
+            return BadRequest(new ErrorResponse("Class ID is required."));
         }
+
+        var normalized = StudentIdValidator.Normalize(studentId);
+        if (normalized is null)
+        {
+            return BadRequest(new ErrorResponse(
+                "Invalid or missing X-Student-Id header. Must be a 17-digit number."));
+        }
+
+        var (success, hold, error, statusCode) = await handler.Handle(classId, normalized, ct);
+        return success
+            ? StatusCode(statusCode, hold)
+            : StatusCode(statusCode, new ErrorResponse(error ?? "Failed to create hold."));
     }
 }

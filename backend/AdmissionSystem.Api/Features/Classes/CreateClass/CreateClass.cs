@@ -28,27 +28,28 @@ public static class CreateClass
             return new Response(entity.Id, entity.Name, entity.TotalSeats);
         }
     }
+}
 
-    [ApiController]
-    [Route("classes")]
-    [Tags("Classes")]
-    public sealed class Endpoint(Handler handler) : ControllerBase
+// Controllers must be top-level: nested types are not discovered by ASP.NET Core (IsPublic == false).
+[ApiController]
+[Route("classes")]
+[Tags("Classes")]
+public sealed class CreateClassEndpoint(CreateClass.Handler handler) : ControllerBase
+{
+    [HttpPost]
+    public async Task<IActionResult> Handle([FromBody] CreateClass.Request request, CancellationToken ct)
     {
-        [HttpPost]
-        public async Task<IActionResult> Handle([FromBody] Request request, CancellationToken ct)
+        if (request is null || string.IsNullOrWhiteSpace(request.Name))
         {
-            if (request is null || string.IsNullOrWhiteSpace(request.Name))
-            {
-                return BadRequest(new ErrorResponse("Class name is required."));
-            }
-
-            if (request.TotalSeats <= 0)
-            {
-                return BadRequest(new ErrorResponse("Total seats must be greater than 0."));
-            }
-
-            var result = await handler.Handle(request, ct);
-            return StatusCode(StatusCodes.Status201Created, result);
+            return BadRequest(new ErrorResponse("Class name is required."));
         }
+
+        if (request.TotalSeats <= 0)
+        {
+            return BadRequest(new ErrorResponse("Total seats must be greater than 0."));
+        }
+
+        var result = await handler.Handle(request, ct);
+        return StatusCode(StatusCodes.Status201Created, result);
     }
 }

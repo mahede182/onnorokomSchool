@@ -23,17 +23,17 @@ public static class GetClasses
             return result;
         }
     }
+}
 
-    [ApiController]
-    [Route("classes")]
-    [Tags("Classes")]
-    public sealed class Endpoint(Handler handler) : ControllerBase
+[ApiController]
+[Route("classes")]
+[Tags("Classes")]
+public sealed class GetClassesEndpoint(GetClasses.Handler handler) : ControllerBase
+{
+    [HttpGet]
+    public async Task<IActionResult> Handle(CancellationToken ct)
     {
-        [HttpGet]
-        public async Task<IActionResult> Handle(CancellationToken ct)
-        {
-            var classes = await handler.Handle(ct);
-            return Ok(classes);
-        }
+        var classes = await handler.Handle(ct);
+        return Ok(classes);
     }
 }

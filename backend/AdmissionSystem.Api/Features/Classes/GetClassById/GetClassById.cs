@@ -16,24 +16,24 @@ public static class GetClassById
             return await ClassSeatQueries.ToDetailAsync(db, cls, DateTime.UtcNow, ct);
         }
     }
+}
 
-    [ApiController]
-    [Route("classes")]
-    [Tags("Classes")]
-    public sealed class Endpoint(Handler handler) : ControllerBase
+[ApiController]
+[Route("classes")]
+[Tags("Classes")]
+public sealed class GetClassByIdEndpoint(GetClassById.Handler handler) : ControllerBase
+{
+    [HttpGet("{classId}")]
+    public async Task<IActionResult> Handle(string classId, CancellationToken ct)
     {
-        [HttpGet("{classId}")]
-        public async Task<IActionResult> Handle(string classId, CancellationToken ct)
+        if (string.IsNullOrWhiteSpace(classId))
         {
-            if (string.IsNullOrWhiteSpace(classId))
-            {
-                return BadRequest(new ErrorResponse("Invalid class ID."));
-            }
-
-            var cls = await handler.Handle(classId, ct);
-            return cls is null
-                ? NotFound(new ErrorResponse("Class not found."))
-                : Ok(cls);
+            return BadRequest(new ErrorResponse("Invalid class ID."));
         }
+
+        var cls = await handler.Handle(classId, ct);
+        return cls is null
+            ? NotFound(new ErrorResponse("Class not found."))
+            : Ok(cls);
     }
 }

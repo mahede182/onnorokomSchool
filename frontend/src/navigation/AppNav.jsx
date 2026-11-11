@@ -9,13 +9,19 @@ export function AppNav() {
         end
         className={({ isActive }) => `nav-btn${isActive ? ' active' : ''}`}
       >
-        Classes
+        Admissions
       </NavLink>
       <NavLink
         to={ROUTES.APPLICATIONS}
         className={({ isActive }) => `nav-btn${isActive ? ' active' : ''}`}
       >
         My Applications
+      </NavLink>
+      <NavLink
+        to={ROUTES.ADMIN}
+        className={({ isActive }) => `nav-btn${isActive ? ' active' : ''}`}
+      >
+        Admin
       </NavLink>
     </nav>
   );

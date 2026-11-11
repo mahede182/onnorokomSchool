@@ -1,0 +1,20 @@
+:root {
+  --color-bg: #fff5f0;
+  --color-surface: #ffffff;
+  --color-ink: #1a1a1a;
+  --color-muted: #5c534c;
+  --color-accent: #ff8d4d;
+  --color-accent-deep: #f06a28;
+  --color-peach: #ffe8dc;
+  --color-peach-deep: #ffd4c2;
+  --color-danger: #e11d48;
+  --color-success: #15803d;
+  --color-held: #b45309;
+  --radius: 12px;
+  --border: 2px solid var(--color-ink);
+  --shadow: 4px 4px 0 var(--color-ink);
+  --shadow-sm: 3px 3px 0 var(--color-ink);
+  --focus-ring: var(--color-accent-deep);
+  --font: "Lexend", system-ui, sans-serif;
+  --max: 1100px;
+}

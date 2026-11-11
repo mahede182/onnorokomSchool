@@ -32,8 +32,9 @@ onnorokomSchool/
 │   ├── AdmissionSystem.Api/
 │   │   ├── Features/
 │   │   │   ├── Classes/          # CreateClass, GetClasses, GetClassById
-│   │   │   └── Holds/            # CreateHold, GetHold, ConfirmHold, CancelHold, GetMyHolds
-│   │   ├── Common/               # Domain, Persistence, Validation, Contracts
+│   │   │   ├── Holds/            # CreateHold, GetHold, ConfirmHold, CancelHold, GetMyHolds
+│   │   │   └── Config/           # GetConfig (relays HOLD_DURATION_SECONDS)
+│   │   ├── Common/               # Domain, Persistence, Validation, Contracts, Config
 │   │   ├── Infrastructure/       # Background cleaner
 │   │   ├── Migrations/
 │   │   ├── DependencyInjection.cs
@@ -72,7 +73,7 @@ Infrastructure/Background
 | Change seat/hold rules | The relevant Holds/Classes handler |
 | Shared student-ID validation | `Common/Validation/StudentIdValidator.cs` |
 | Schema change | `Common/Domain` + EF migration |
-| Call API from UI | `frontend/src/api/` then page/hook |
+| Call API from UI | `frontend/src/api/` (§1.4 paths in `paths.js`) then page/hook |
 | Concurrency proof | `AdmissionSystem.Api.Tests` |
 
 ## Domain Non-Negotiables

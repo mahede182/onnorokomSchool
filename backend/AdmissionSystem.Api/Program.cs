@@ -41,7 +41,9 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AdmissionDbContext>();
-    db.Database.Migrate();
+    var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>()
+        .CreateLogger("DbBootstrap");
+    DbBootstrap.EnsureSchema(db, logger);
 }
 
 app.UseSwagger();

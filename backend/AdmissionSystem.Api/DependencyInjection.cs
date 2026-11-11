@@ -1,6 +1,7 @@
 using AdmissionSystem.Api.Features.Classes.CreateClass;
 using AdmissionSystem.Api.Features.Classes.GetClassById;
 using AdmissionSystem.Api.Features.Classes.GetClasses;
+using AdmissionSystem.Api.Features.Config.GetConfig;
 using AdmissionSystem.Api.Features.Holds.CancelHold;
 using AdmissionSystem.Api.Features.Holds.ConfirmHold;
 using AdmissionSystem.Api.Features.Holds.CreateHold;
@@ -22,6 +23,7 @@ public static class DependencyInjection
         services.AddScoped<ConfirmHold.Handler>();
         services.AddScoped<CancelHold.Handler>();
         services.AddScoped<GetMyHolds.Handler>();
+        services.AddScoped<GetConfig.Handler>();
         services.AddHostedService<ExpiredHoldCleanerService>();
         return services;
     }

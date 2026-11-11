@@ -11,7 +11,7 @@ Assumptions made where the take-home assignment left room for interpretation.
 ## Holds & payment
 
 - **“Pay Admission Fee”** calls `POST /holds/{holdId}/confirm` and always simulates success (no payment gateway).
-- Hold duration defaults to **600 seconds** via `HOLD_DURATION_SECONDS`.
+- Hold duration defaults to **600 seconds** via `HOLD_DURATION_SECONDS` (backend); UI reads it from `GET /config`.
 - A student may have at most **one active** (`HELD` non-expired or `CONFIRMED`) application **per class**.
 - Expired holds are reflected **on read** immediately and also marked `EXPIRED` by a background cleaner (~10s).
 
@@ -37,3 +37,4 @@ Assumptions made where the take-home assignment left room for interpretation.
 
 - Backend uses **feature folders** (vertical slices) inspired by [Milan Jovanović – Feature Folders in .NET](https://milanjovanovic.tech/blog/feature-folders-dotnet).
 - Shared persistence/domain live under `Common/`; each use case under `Features/{Area}/{UseCase}/`.
+- Frontend visual language inspired by [Admission Page Design (Dribbble)](https://dribbble.com/shots/23312568-Admission-Page-Design-of-School-Portfolio-Website).

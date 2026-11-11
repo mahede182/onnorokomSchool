@@ -101,34 +101,34 @@ public static class ConfirmHold
             }
         }
     }
+}
 
-    [ApiController]
-    [Route("holds")]
-    [Tags("Holds")]
-    public sealed class Endpoint(Handler handler) : ControllerBase
+[ApiController]
+[Route("holds")]
+[Tags("Holds")]
+public sealed class ConfirmHoldEndpoint(ConfirmHold.Handler handler) : ControllerBase
+{
+    [HttpPost("{holdId}/confirm")]
+    public async Task<IActionResult> Handle(
+        string holdId,
+        [FromHeader(Name = "X-Student-Id")] string? studentId,
+        CancellationToken ct)
     {
-        [HttpPost("{holdId}/confirm")]
-        public async Task<IActionResult> Handle(
-            string holdId,
-            [FromHeader(Name = "X-Student-Id")] string? studentId,
-            CancellationToken ct)
+        if (string.IsNullOrWhiteSpace(holdId))
         {
-            if (string.IsNullOrWhiteSpace(holdId))
-            {
-                return BadRequest(new ErrorResponse("Hold ID is required."));
-            }
-
-            var normalized = StudentIdValidator.Normalize(studentId);
-            if (normalized is null)
-            {
-                return BadRequest(new ErrorResponse(
-                    "Invalid or missing X-Student-Id header. Must be a 17-digit number."));
-            }
-
-            var (success, result, error, statusCode) = await handler.Handle(holdId, normalized, ct);
-            return success
-                ? Ok(result)
-                : StatusCode(statusCode, new ErrorResponse(error ?? "Failed to confirm hold."));
+            return BadRequest(new ErrorResponse("Hold ID is required."));
         }
+
+        var normalized = StudentIdValidator.Normalize(studentId);
+        if (normalized is null)
+        {
+            return BadRequest(new ErrorResponse(
+                "Invalid or missing X-Student-Id header. Must be a 17-digit number."));
+        }
+
+        var (success, result, error, statusCode) = await handler.Handle(holdId, normalized, ct);
+        return success
+            ? Ok(result)
+            : StatusCode(statusCode, new ErrorResponse(error ?? "Failed to confirm hold."));
     }
 }

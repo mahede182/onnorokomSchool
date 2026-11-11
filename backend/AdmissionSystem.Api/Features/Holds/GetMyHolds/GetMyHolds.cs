@@ -45,26 +45,26 @@ public static class GetMyHolds
             }).ToList();
         }
     }
+}
 
-    [ApiController]
-    [Route("me")]
-    [Tags("Me")]
-    public sealed class Endpoint(Handler handler) : ControllerBase
+[ApiController]
+[Route("me")]
+[Tags("Me")]
+public sealed class GetMyHoldsEndpoint(GetMyHolds.Handler handler) : ControllerBase
+{
+    [HttpGet("holds")]
+    public async Task<IActionResult> Handle(
+        [FromHeader(Name = "X-Student-Id")] string? studentId,
+        CancellationToken ct)
     {
-        [HttpGet("holds")]
-        public async Task<IActionResult> Handle(
-            [FromHeader(Name = "X-Student-Id")] string? studentId,
-            CancellationToken ct)
+        var normalized = StudentIdValidator.Normalize(studentId);
+        if (normalized is null)
         {
-            var normalized = StudentIdValidator.Normalize(studentId);
-            if (normalized is null)
-            {
-                return BadRequest(new ErrorResponse(
-                    "Invalid or missing X-Student-Id header. Must be a 17-digit number."));
-            }
-
-            var holds = await handler.Handle(normalized, ct);
-            return Ok(holds);
+            return BadRequest(new ErrorResponse(
+                "Invalid or missing X-Student-Id header. Must be a 17-digit number."));
         }
+
+        var holds = await handler.Handle(normalized, ct);
+        return Ok(holds);
     }
 }

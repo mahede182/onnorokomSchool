@@ -40,34 +40,34 @@ public static class CancelHold
             return (true, null, 204);
         }
     }
+}
 
-    [ApiController]
-    [Route("holds")]
-    [Tags("Holds")]
-    public sealed class Endpoint(Handler handler) : ControllerBase
+[ApiController]
+[Route("holds")]
+[Tags("Holds")]
+public sealed class CancelHoldEndpoint(CancelHold.Handler handler) : ControllerBase
+{
+    [HttpDelete("{holdId}")]
+    public async Task<IActionResult> Handle(
+        string holdId,
+        [FromHeader(Name = "X-Student-Id")] string? studentId,
+        CancellationToken ct)
     {
-        [HttpDelete("{holdId}")]
-        public async Task<IActionResult> Handle(
-            string holdId,
-            [FromHeader(Name = "X-Student-Id")] string? studentId,
-            CancellationToken ct)
+        if (string.IsNullOrWhiteSpace(holdId))
         {
-            if (string.IsNullOrWhiteSpace(holdId))
-            {
-                return BadRequest(new ErrorResponse("Hold ID is required."));
-            }
-
-            var normalized = StudentIdValidator.Normalize(studentId);
-            if (normalized is null)
-            {
-                return BadRequest(new ErrorResponse(
-                    "Invalid or missing X-Student-Id header. Must be a 17-digit number."));
-            }
-
-            var (success, error, statusCode) = await handler.Handle(holdId, normalized, ct);
-            return success
-                ? NoContent()
-                : StatusCode(statusCode, new ErrorResponse(error ?? "Failed to cancel hold."));
+            return BadRequest(new ErrorResponse("Hold ID is required."));
         }
+
+        var normalized = StudentIdValidator.Normalize(studentId);
+        if (normalized is null)
+        {
+            return BadRequest(new ErrorResponse(
+                "Invalid or missing X-Student-Id header. Must be a 17-digit number."));
+        }
+
+        var (success, error, statusCode) = await handler.Handle(holdId, normalized, ct);
+        return success
+            ? NoContent()
+            : StatusCode(statusCode, new ErrorResponse(error ?? "Failed to cancel hold."));
     }
 }

@@ -39,11 +39,13 @@ description: >
 - **Motion**: respect `prefers-reduced-motion`.
 - **Focus styles**: use `:focus-visible` (never remove focus without replacement).
 
-## API Access
+## API Access (§1.4 contract)
 
 - All network calls go through `src/api/` (never raw `fetch` in pages).
-- Base URL: `config/env.js` → `VITE_API_BASE_URL`.
-- Pass `studentId` into methods that require `X-Student-Id`.
+- Paths live in `src/api/paths.js` — must match assignment endpoints exactly.
+- Base URL: `config/env.js` → `VITE_API_BASE_URL` (default `http://localhost:8080`).
+- Student actions send `X-Student-Id` (17-digit birth registration).
+- JSON only; callers may read extra fields but must not rename/drop contract fields.
 
 ## UX Rules
 

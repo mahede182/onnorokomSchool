@@ -1,6 +1,7 @@
 using AdmissionSystem.Api.Common.Domain;
 using AdmissionSystem.Api.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace AdmissionSystem.Api.Infrastructure.Background;
 
@@ -43,6 +44,11 @@ public class ExpiredHoldCleanerService : BackgroundService
                     await context.SaveChangesAsync(stoppingToken);
                     _logger.LogInformation("Marked {Count} holds as EXPIRED.", expiredHolds.Count);
                 }
+            }
+            catch (PostgresException ex) when (
+                !stoppingToken.IsCancellationRequested && ex.SqlState == PostgresErrorCodes.UndefinedTable)
+            {
+                _logger.LogWarning("Holds table not ready yet; will retry.");
             }
             catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
             {

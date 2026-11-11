@@ -35,24 +35,24 @@ public static class GetHold
                 UtcFormat.ToIsoZ(hold.ExpiresAt)), null, 200);
         }
     }
+}
 
-    [ApiController]
-    [Route("holds")]
-    [Tags("Holds")]
-    public sealed class Endpoint(Handler handler) : ControllerBase
+[ApiController]
+[Route("holds")]
+[Tags("Holds")]
+public sealed class GetHoldEndpoint(GetHold.Handler handler) : ControllerBase
+{
+    [HttpGet("{holdId}")]
+    public async Task<IActionResult> Handle(string holdId, CancellationToken ct)
     {
-        [HttpGet("{holdId}")]
-        public async Task<IActionResult> Handle(string holdId, CancellationToken ct)
+        if (string.IsNullOrWhiteSpace(holdId))
         {
-            if (string.IsNullOrWhiteSpace(holdId))
-            {
-                return BadRequest(new ErrorResponse("Hold ID is required."));
-            }
-
-            var (success, hold, error, statusCode) = await handler.Handle(holdId, ct);
-            return success
-                ? Ok(hold)
-                : StatusCode(statusCode, new ErrorResponse(error ?? "Hold not found."));
+            return BadRequest(new ErrorResponse("Hold ID is required."));
         }
+
+        var (success, hold, error, statusCode) = await handler.Handle(holdId, ct);
+        return success
+            ? Ok(hold)
+            : StatusCode(statusCode, new ErrorResponse(error ?? "Hold not found."));
     }
 }

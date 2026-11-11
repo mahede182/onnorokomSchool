@@ -4,7 +4,7 @@ import { HOLD_STATUS } from '../../../constants/holdStatus';
 import { formatCountdown, isExpired } from '../../../utils/countdown';
 import { formatDateTime } from '../../../utils/formatDate';
 
-export function ApplicationsTable({ holds, onConfirm, onCancel }) {
+export function ApplicationsTable({ holds, holdDurationSeconds, onConfirm, onCancel }) {
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
@@ -19,7 +19,6 @@ export function ApplicationsTable({ holds, onConfirm, onCancel }) {
         <thead>
           <tr>
             <th scope="col">Class</th>
-            <th scope="col">Hold ID</th>
             <th scope="col">Status</th>
             <th scope="col">Expires</th>
             <th scope="col">Time left</th>
@@ -35,9 +34,9 @@ export function ApplicationsTable({ holds, onConfirm, onCancel }) {
 
             return (
               <tr key={h.holdId}>
-                <td>{h.className}</td>
                 <td>
-                  <code className="hold-id">{h.holdId}</code>
+                  <strong>{h.className}</strong>
+                  <div className="hold-id text-sm">{h.holdId}</div>
                 </td>
                 <td>
                   <Badge status={status} />
@@ -47,10 +46,17 @@ export function ApplicationsTable({ holds, onConfirm, onCancel }) {
                     {formatDateTime(h.expiresAt)}
                   </time>
                 </td>
-                <td className="text-sm">
-                  {status === HOLD_STATUS.HELD
-                    ? formatCountdown(h.expiresAt, now)
-                    : '—'}
+                <td>
+                  {status === HOLD_STATUS.HELD ? (
+                    <span
+                      className="countdown"
+                      title={`Hold window ${holdDurationSeconds}s from API (HOLD_DURATION_SECONDS)`}
+                    >
+                      {formatCountdown(h.expiresAt, now, holdDurationSeconds)}
+                    </span>
+                  ) : (
+                    <span className="text-muted">—</span>
+                  )}
                 </td>
                 <td>
                   <div className="table-actions">
